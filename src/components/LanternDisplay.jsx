@@ -41,7 +41,7 @@ const LanternDisplay = ({ newWish }) => {
     const wishesQuery = query(
       ref(database, 'wishes'),
       orderByChild('timestamp'),
-      limitToLast(50)
+      limitToLast(40)
     );
 
     const unsubscribe = onValue(wishesQuery, (snapshot) => {
@@ -102,11 +102,20 @@ const LanternDisplay = ({ newWish }) => {
 
   return (
     <div className="min-h-screen bg-black overflow-hidden relative">
+      {/* Title Text */}
+      <motion.div
+        className="absolute top-16 md:top-20 left-1/2 transform -translate-x-1/2 z-10 text-center px-4"
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.5, duration: 1 }}
+      >
+
+      </motion.div>
+
       {/* Stats Display */}
-      <div className="absolute top-4 right-4 bg-black/50 backdrop-blur-sm rounded-lg p-4 text-white z-10">
-        <div className="text-sm">
+      <div className="absolute top-4 right-4 bg-black/50 backdrop-blur-sm rounded-lg p-3 md:p-4 text-white z-10">
+        <div className="text-xs md:text-sm">
           <div>Total Wishes: <span className="font-bold text-yellow-400">{totalCount.toLocaleString()}</span></div>
-          {/* <div>Showing: <span className="font-bold text-blue-400">{wishes.length}</span></div> */}
         </div>
       </div>
 
@@ -311,111 +320,34 @@ const LanternDisplay = ({ newWish }) => {
                   e.target.nextSibling.style.display = 'block';
                 }}
               />
-              
-              {/* Enhanced SVG Lantern with Myanmar-style Tassel */}
-              <svg
-                width={position.size}
-                height={position.size * 1.2}
-                viewBox="0 0 100 120"
-                style={{ display: 'none' }}
-                className="drop-shadow-lg"
-              >
-                {/* Hanging String */}
-                <line x1="50" y1="5" x2="50" y2="15" stroke="#8B4513" strokeWidth="2"/>
-                
-                {/* Lantern Top Cap */}
-                <ellipse cx="50" cy="15" rx="25" ry="8" fill={colors.primary} stroke={colors.secondary} strokeWidth="2"/>
-                <ellipse cx="50" cy="12" rx="20" ry="5" fill={colors.secondary} opacity="0.8"/>
-                
-                {/* Main Lantern Body */}
-                <path
-                  d="M25 20 Q25 15 30 15 L70 15 Q75 15 75 20 L75 75 Q75 85 65 90 L35 90 Q25 85 25 75 Z"
-                  fill={`url(#lanternGradient${index})`}
-                  stroke={colors.accent}
-                  strokeWidth="2"
-                />
-                
-                {/* Lantern Decorative Patterns */}
-                <rect x="32" y="25" width="36" height="45" fill="none" stroke="#FFF" strokeWidth="1" opacity="0.7" rx="8"/>
-                <line x1="38" y1="30" x2="38" y2="65" stroke={colors.accent} strokeWidth="1" opacity="0.9"/>
-                <line x1="50" y1="30" x2="50" y2="65" stroke={colors.accent} strokeWidth="1" opacity="0.9"/>
-                <line x1="62" y1="30" x2="62" y2="65" stroke={colors.accent} strokeWidth="1" opacity="0.9"/>
-                
-                {/* Horizontal Bands */}
-                <line x1="32" y1="40" x2="68" y2="40" stroke={colors.accent} strokeWidth="1" opacity="0.7"/>
-                <line x1="32" y1="55" x2="68" y2="55" stroke={colors.accent} strokeWidth="1" opacity="0.7"/>
-                
-                {/* Myanmar-style Tassel Assembly */}
-                {/* Main Tassel Cord */}
-                <rect x="48" y="90" width="4" height="8" fill="#8B0000" rx="2"/>
-                
-                {/* Tassel Ornament */}
-                <circle cx="50" cy="102" r="6" fill="#DC143C" stroke="#8B0000" strokeWidth="1"/>
-                <circle cx="50" cy="102" r="4" fill="#FF6347" opacity="0.8"/>
-                
-                {/* Hanging Threads (Myanmar style) */}
-                <g opacity="0.9">
-                  <line x1="45" y1="108" x2="44" y2="115" stroke="#8B0000" strokeWidth="1"/>
-                  <line x1="47" y1="108" x2="46" y2="116" stroke="#8B0000" strokeWidth="1"/>
-                  <line x1="50" y1="108" x2="50" y2="117" stroke="#8B0000" strokeWidth="1.5"/>
-                  <line x1="53" y1="108" x2="54" y2="116" stroke="#8B0000" strokeWidth="1"/>
-                  <line x1="55" y1="108" x2="56" y2="115" stroke="#8B0000" strokeWidth="1"/>
-                </g>
-                
-                {/* Small decorative beads on threads */}
-                <circle cx="44" cy="113" r="1" fill="#DC143C"/>
-                <circle cx="46" cy="114" r="1" fill="#DC143C"/>
-                <circle cx="50" cy="115" r="1.5" fill="#DC143C"/>
-                <circle cx="54" cy="114" r="1" fill="#DC143C"/>
-                <circle cx="56" cy="113" r="1" fill="#DC143C"/>
-                
-                {/* Gradient Definition */}
-                <defs>
-                  <linearGradient id={`lanternGradient${index}`} x1="0%" y1="0%" x2="0%" y2="100%">
-                    <stop offset="0%" stopColor={colors.primary}/>
-                    <stop offset="50%" stopColor={colors.secondary}/>
-                    <stop offset="100%" stopColor={colors.accent}/>
-                  </linearGradient>
-                </defs>
-              </svg>
+
             </motion.div>
           </motion.div>
         );
       })}
 
-      {/* Wish Modal */}
+      {/* Simple Modal */}
       <AnimatePresence>
         {selectedWish && (
           <motion.div
-            className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4"
+            className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setSelectedWish(null)}
           >
             <motion.div
-              className="rounded-2xl p-6 max-w-md w-full shadow-2xl"
-              style={{
-                background: `linear-gradient(135deg, ${selectedWish.colors.primary}, ${selectedWish.colors.secondary})`,
-                color: '#000'
-              }}
-              initial={{ scale: 0.5, opacity: 0 }}
+              className="bg-white rounded-lg p-4 md:p-6 lg:p-8 w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg text-center"
+              initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.5, opacity: 0 }}
+              exit={{ scale: 0.9, opacity: 0 }}
               onClick={(e) => e.stopPropagation()}
             >
-              {/* <div className="text-center mb-4">
-                <h3 className="text-xl font-bold mb-2">🏮 Wish 🏮</h3>
-                <p className="text-lg font-semibold">~ {selectedWish.name} ~</p>
-              </div> */}
-              
-              <div className="bg-white/30 rounded-lg p-4 mb-4">
-                <p className="text-lg italic">"{selectedWish.wish}"</p>
-              </div>
-              
+              <div className="text-3xl md:text-4xl lg:text-5xl mb-3 md:mb-4">🏮</div>
+              <h2 className="text-gray-800 mb-4 md:mb-6 text-sm md:text-base lg:text-lg leading-relaxed">"{selectedWish.wish}"</h2>
               <button
                 onClick={() => setSelectedWish(null)}
-                className="w-full bg-black/20 hover:bg-black/30 text-white font-bold py-2 rounded-lg transition-colors"
+                className="w-full py-2 md:py-3 bg-pink-600 hover:bg-pink-700 rounded text-sm md:text-base transition-colors"
               >
                 Close
               </button>
@@ -423,6 +355,18 @@ const LanternDisplay = ({ newWish }) => {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Footer */}
+      <motion.footer
+        className="absolute bottom-0 left-0 right-0 bg-black/30 backdrop-blur-sm text-white text-center py-3 md:py-4 px-4 z-10"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 2, duration: 1 }}
+      >
+        <p className="text-xs md:text-sm text-white/80">
+          ✨ “Even the smallest spark can shine” ✨
+        </p>
+      </motion.footer>
     </div>
   );
 };
