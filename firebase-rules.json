@@ -1,0 +1,12 @@
+{
+  "rules": {
+    "wishes": {
+      ".read": true,
+      ".write": true,
+      ".indexOn": ["timestamp"],
+      "$wishId": {
+        ".validate": "newData.hasChildren(['name', 'wish', 'timestamp']) && newData.child('name').isString() && newData.child('wish').isString() && newData.child('timestamp').isNumber()"
+      }
+    }
+  }
+}
