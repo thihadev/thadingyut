@@ -337,20 +337,26 @@ const LanternDisplay = ({ newWish }) => {
             onClick={() => setSelectedWish(null)}
           >
             <motion.div
-              className="bg-white rounded-lg p-4 md:p-6 lg:p-8 w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg text-center"
+              className="bg-white rounded-lg p-4 md:p-6 lg:p-8 w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg text-center relative"
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="text-3xl md:text-4xl lg:text-5xl mb-3 md:mb-4">🏮</div>
-              <h2 className="text-gray-800 mb-4 md:mb-6 text-sm md:text-base lg:text-lg leading-relaxed">"{selectedWish.wish}"</h2>
-              <button
-                onClick={() => setSelectedWish(null)}
-                className="w-full py-2 md:py-3 bg-pink-600 hover:bg-pink-700 rounded text-sm md:text-base transition-colors"
-              >
-                Close
-              </button>
+              <img 
+                src="/simee.png" 
+                alt="Lantern" 
+                className="w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 mx-auto mb-4 md:mb-6 rounded-lg"
+              />
+              <div>
+                <h2 className="text-gray-800 mb-4 md:mb-6 text-sm md:text-base lg:text-lg leading-relaxed">"{selectedWish.wish}"</h2>
+                <button
+                  onClick={() => setSelectedWish(null)}
+                  className="w-full py-2 md:py-3 bg-pink-600 hover:bg-pink-700 rounded text-sm md:text-base transition-colors"
+                >
+                  Close
+                </button>
+              </div>
             </motion.div>
           </motion.div>
         )}
