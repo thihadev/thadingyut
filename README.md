@@ -27,12 +27,14 @@ A scalable Myanmar Thadingyut festival website that can handle 2 million users w
 - **Limited to 50 latest wishes** for UI performance
 - **Pagination ready** for future scaling
 - **Validation rules** to prevent spam
+- **1-minute cooldown** between wish submissions to prevent spam
 
 ### Performance Features
 - **Redux state management** for efficient updates
 - **Real-time listeners** only for latest 50 wishes
 - **Optimized animations** with Framer Motion
 - **Responsive design** for all devices
+- **Client-side rate limiting** with localStorage cooldown
 
 ### Scaling Considerations
 - Use Firebase's automatic scaling
@@ -42,12 +44,14 @@ A scalable Myanmar Thadingyut festival website that can handle 2 million users w
 
 ## 🎨 Features
 
+- **Anonymous wish submissions** (no username required)
 - **Real-time wish submissions** with Firebase
 - **Animated Myanmar lanterns** floating in the sky
 - **Latest 50 wishes display** with total count
 - **Responsive design** for mobile and desktop
 - **Beautiful animations** with Framer Motion
 - **ShadCN UI components** for consistent design
+- **1-minute cooldown** between submissions to prevent spam
 
 ## 🔧 Production Deployment
 
@@ -74,6 +78,6 @@ A scalable Myanmar Thadingyut festival website that can handle 2 million users w
 ## 🛡️ Security
 
 - Implement proper Firebase security rules
-- Add rate limiting for wish submissions
+- Add rate limiting for wish submissions (1-minute cooldown)
 - Validate input data on client and server
 - Monitor for spam and abuse

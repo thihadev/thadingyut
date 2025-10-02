@@ -77,7 +77,7 @@ const Lantern = ({ wish, index }) => {
           animate={{ opacity: isHovered ? 1 : 0 }}
           transition={{ duration: 0.3 }}
         >
-          {wish.name}: {wish.wish}
+          {wish.wish}
         </motion.div>
       </motion.div>
     </motion.div>

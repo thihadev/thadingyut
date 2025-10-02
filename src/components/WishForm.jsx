@@ -1,29 +1,47 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { motion } from 'framer-motion';
 import { Button } from './ui/button';
-import { Input } from './ui/input';
 import { Textarea } from './ui/textarea';
 import { ref, push } from 'firebase/database';
 import { database } from '../firebase';
 import { addWish } from '../store/wishesSlice';
 
 const WishForm = ({ onWishSubmitted }) => {
-  const [name, setName] = useState('');
   const [wish, setWish] = useState('');
+  const [name, setName] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [cooldownTime, setCooldownTime] = useState(0);
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    const lastWishTime = localStorage.getItem('lastWishTime');
+    if (lastWishTime) {
+      const timeDiff = Date.now() - parseInt(lastWishTime);
+      const cooldownDuration = 60000; // 1 minute cooldown
+      if (timeDiff < cooldownDuration) {
+        setCooldownTime(Math.ceil((cooldownDuration - timeDiff) / 1000));
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    if (cooldownTime > 0) {
+      const timer = setTimeout(() => setCooldownTime(cooldownTime - 1), 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [cooldownTime]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!name.trim() || !wish.trim()) return;
+    if (!wish.trim() || cooldownTime > 0) return;
 
     setIsSubmitting(true);
     
     try {
       const wishData = {
-        name: name.trim(),
         wish: wish.trim(),
+        name: name.trim() || 'Anonymous',
         timestamp: Date.now(),
         id: Date.now() + Math.random()
       };
@@ -34,9 +52,13 @@ const WishForm = ({ onWishSubmitted }) => {
       // Add to Redux store for immediate UI update
       dispatch(addWish(wishData));
       
+      // Set cooldown
+      localStorage.setItem('lastWishTime', Date.now().toString());
+      setCooldownTime(60);
+      
       // Reset form
-      setName('');
       setWish('');
+      setName('');
       
       // Redirect to view page with new wish
       if (onWishSubmitted) {
@@ -60,18 +82,16 @@ const WishForm = ({ onWishSubmitted }) => {
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
           <label className="block text-white font-semibold mb-2">
-            Your Name
+            Your Name (Optional)
           </label>
-          <Input
+          <input
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            placeholder="Enter your name"
-            className="bg-white/90 text-black border-0 focus:ring-2 focus:ring-yellow-400"
-            required
+            placeholder="Enter your name (optional)"
+            className="w-full bg-white/90 text-black border-0 focus:ring-2 focus:ring-pink-400 rounded-md p-3"
           />
         </div>
-        
         <div>
           <label className="block text-white font-semibold mb-2">
             Your Thadingyut Wish
@@ -80,18 +100,24 @@ const WishForm = ({ onWishSubmitted }) => {
             value={wish}
             onChange={(e) => setWish(e.target.value)}
             placeholder="Make your wish for the Festival of Lights..."
-            rows={3}
-            className="bg-white/90 text-black border-0 focus:ring-2 focus:ring-yellow-400 resize-none"
+            rows={7}
+            className="bg-white/90 text-black border-0 focus:ring-2 focus:ring-pink-400 resize-none"
             required
           />
         </div>
         
+        {cooldownTime > 0 && (
+          <div className="text-pink-300 text-sm text-center">
+            Please wait {cooldownTime} seconds before making another wish
+          </div>
+        )}
+        
         <Button
           type="submit"
-          disabled={isSubmitting}
-          className="w-full bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 text-black font-bold py-3 rounded-full transition-all duration-300 transform hover:scale-105"
+          disabled={isSubmitting || cooldownTime > 0}
+          className="w-full bg-pink-600 hover:bg-pink-700 text-white font-bold py-3 rounded-full transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {isSubmitting ? '🏮 Sending...' : '🏮 Send My Wish to the Sky'}
+          {isSubmitting ? 'Sending...' : cooldownTime > 0 ? `Wait ${cooldownTime}s` : 'Send My Wish to the Sky'}
         </Button>
       </form>
     </motion.div>

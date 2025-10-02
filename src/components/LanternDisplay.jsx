@@ -5,7 +5,7 @@ import { ref, onValue, query, orderByChild, limitToLast } from 'firebase/databas
 import { database } from '../firebase';
 import { setWishes, setTotalCount } from '../store/wishesSlice';
 
-const LanternDisplay = ({ newWish }) => {
+const LanternDisplay = ({ newWish, onBack }) => {
   const [selectedWish, setSelectedWish] = useState(null);
   const [lanternPositions, setLanternPositions] = useState([]);
   const [showOtherLanterns, setShowOtherLanterns] = useState(false);
@@ -41,7 +41,7 @@ const LanternDisplay = ({ newWish }) => {
     const wishesQuery = query(
       ref(database, 'wishes'),
       orderByChild('timestamp'),
-      limitToLast(40)
+      limitToLast(70)
     );
 
     const unsubscribe = onValue(wishesQuery, (snapshot) => {
@@ -69,7 +69,7 @@ const LanternDisplay = ({ newWish }) => {
   useEffect(() => {
     if (wishes.length > 0 && lanternPositions.length === 0) {
       const positions = [];
-      const minDistance = 8; // Minimum distance between lanterns (percentage)
+      const minDistance = 10; // Minimum distance between lanterns (percentage)
       
       for (let i = 0; i < wishes.length; i++) {
         let attempts = 0;
@@ -78,7 +78,7 @@ const LanternDisplay = ({ newWish }) => {
         do {
           position = {
             x: Math.random() * 85 + 5, // 5-90% to avoid edges
-            y: Math.random() * 75 + 10, // 10-85% to avoid edges
+            y: Math.random() * 60 + 20, // 25-90% to avoid header area
             size: Math.random() * 45 + 55, // 35-60px
             rotation: Math.random() * 20 - 10,
             colorIndex: Math.floor(Math.random() * colorPalettes.length)
@@ -102,22 +102,26 @@ const LanternDisplay = ({ newWish }) => {
 
   return (
     <div className="min-h-screen bg-black overflow-hidden relative">
-      {/* Title Text */}
-      <motion.div
-        className="absolute top-16 md:top-20 left-1/2 transform -translate-x-1/2 z-10 text-center px-4"
+      {/* Header */}
+      <motion.header
+        className="absolute top-0 left-0 right-0 bg-black/50 backdrop-blur-sm text-white h-32 flex items-center justify-center px-4 z-10"
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.5, duration: 1 }}
       >
-
-      </motion.div>
-
-      {/* Stats Display */}
-      <div className="absolute top-4 right-4 bg-black/50 backdrop-blur-sm rounded-lg p-3 md:p-4 text-white z-10">
-        <div className="text-xs md:text-sm">
-          <div>Total Wishes: <span className="font-bold text-yellow-400">{totalCount.toLocaleString()}</span></div>
+        <div className="">
+          <button
+            onClick={() => onBack ? onBack() : window.history.back()}
+            className="hover:scale-105 transition-transform"
+          >
+            <motion.img
+              src="/thadin.png"
+              alt="Thadingyut Festival"
+              className="w-full h-auto max-w-xs md:max-w-sm lg:max-w-md"
+            />
+          </button>
         </div>
-      </div>
+      </motion.header>
 
       {/* Sparkling Stars */}
       {Array.from({ length: 100 }).map((_, i) => (
@@ -149,7 +153,7 @@ const LanternDisplay = ({ newWish }) => {
           className="absolute cursor-pointer"
           style={{
             left: '50%',
-            top: '40%',
+            top: '50%',
             transform: 'translateX(-50%)',
           }}
           initial={{ y: window.innerHeight + 100, opacity: 0, scale: 0.5 }}

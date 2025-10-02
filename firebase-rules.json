@@ -5,7 +5,7 @@
       ".write": true,
       ".indexOn": ["timestamp"],
       "$wishId": {
-        ".validate": "newData.hasChildren(['name', 'wish', 'timestamp']) && newData.child('name').isString() && newData.child('wish').isString() && newData.child('timestamp').isNumber()"
+        ".validate": "newData.hasChildren(['wish', 'timestamp']) && newData.child('wish').isString() && newData.child('timestamp').isNumber()"
       }
     }
   }
