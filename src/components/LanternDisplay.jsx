@@ -41,7 +41,7 @@ const LanternDisplay = ({ newWish, onBack }) => {
     const wishesQuery = query(
       ref(database, 'wishes'),
       orderByChild('timestamp'),
-      limitToLast(70)
+      limitToLast(40)
     );
 
     const unsubscribe = onValue(wishesQuery, (snapshot) => {
@@ -338,13 +338,15 @@ const LanternDisplay = ({ newWish, onBack }) => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
+            transition={{ duration: 0.15 }}
             onClick={() => setSelectedWish(null)}
           >
             <motion.div
               className="bg-white rounded-lg p-4 md:p-6 lg:p-8 w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg text-center relative"
-              initial={{ scale: 0.9, opacity: 0 }}
+              initial={{ scale: 0.8, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
+              exit={{ scale: 0.8, opacity: 0 }}
+              transition={{ duration: 0.2, ease: "easeOut" }}
               onClick={(e) => e.stopPropagation()}
             >
               <img 
@@ -356,7 +358,7 @@ const LanternDisplay = ({ newWish, onBack }) => {
                 <h2 className="text-gray-800 mb-4 md:mb-6 text-sm md:text-base lg:text-lg leading-relaxed">"{selectedWish.wish}"</h2>
                 <button
                   onClick={() => setSelectedWish(null)}
-                  className="w-full py-2 md:py-3 bg-pink-600 hover:bg-pink-700 rounded text-sm md:text-base transition-colors"
+                  className="w-24 py-2 md:py-3 bg-pink-600 hover:bg-pink-700 rounded text-sm md:text-base transition-colors"
                 >
                   Close
                 </button>

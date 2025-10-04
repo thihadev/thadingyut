@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { motion } from 'framer-motion';
 import { Button } from './ui/button';
+import { Input } from './ui/input';
 import { Textarea } from './ui/textarea';
 import { ref, push } from 'firebase/database';
 import { database } from '../firebase';
@@ -84,12 +85,12 @@ const WishForm = ({ onWishSubmitted }) => {
           <label className="block text-white font-semibold mb-2">
             Your Name (Optional)
           </label>
-          <input
+          <Input
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="Enter your name (optional)"
-            className="w-full bg-white/90 text-black border-0 focus:ring-2 focus:ring-pink-400 rounded-md p-3"
+            className="w-full bg-white/90 text-black border-0 focus:ring-2 focus:ring-pink-400"
           />
         </div>
         <div>
@@ -108,16 +109,17 @@ const WishForm = ({ onWishSubmitted }) => {
         
         {cooldownTime > 0 && (
           <div className="text-pink-300 text-sm text-center">
-            Please wait {cooldownTime} seconds before making another wish
+            နောက်ထပ် ဆုတောင်းမီးပုံးလွှတ်တင်ရန် {cooldownTime} စက္ကန့်စောင့်ဆိုင်းပါ
+            {/* Please wait {cooldownTime} seconds before making another wish */}
           </div>
         )}
         
         <Button
           type="submit"
           disabled={isSubmitting || cooldownTime > 0}
-          className="w-full bg-pink-600 hover:bg-pink-700 text-white font-bold py-3 rounded-full transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full bg-pink-600 hover:bg-pink-700 text-white font-bold py-2 rounded-full transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {isSubmitting ? 'Sending...' : cooldownTime > 0 ? `Wait ${cooldownTime}s` : 'Send My Wish to the Sky'}
+          {isSubmitting ? 'လွှတ်တင်နေသည်...' : cooldownTime > 0 ? `${cooldownTime}s စောင့်ဆိုင်းပါ` : 'မီးပုံးလွှတ်တင်မည်'}
         </Button>
       </form>
     </motion.div>

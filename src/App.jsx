@@ -74,7 +74,7 @@ function App() {
 
       {/* Total Wishes */}
       <motion.div
-        className="relative z-10 text-center px-4 mb-4"
+        className="relative z-10 text-center px-4 mb-2"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 1, duration: 0.8 }}
@@ -90,7 +90,7 @@ function App() {
       </motion.div>
 
       {/* Wish Form */}
-      <div className="relative z-10 px-4 mb-8">
+      <div className="relative z-10 px-2 mb-8">
         <WishForm onWishSubmitted={handleWishSubmitted} />
       </div>
 

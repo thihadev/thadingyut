@@ -13,7 +13,7 @@ const LanternSky = () => {
     const wishesQuery = query(
       ref(database, 'wishes'),
       orderByChild('timestamp'),
-      limitToLast(70)
+      limitToLast(40)
     );
 
     const unsubscribe = onValue(wishesQuery, (snapshot) => {
