@@ -7,8 +7,9 @@ import { setWishes, setTotalCount } from '../store/wishesSlice';
 
 const LanternDisplay = ({ newWish, onBack }) => {
   const [selectedWish, setSelectedWish] = useState(null);
-  const [lanternPositions, setLanternPositions] = useState([]);
+  const [lanternPositions, setLanternPositions] = useState({});
   const [showOtherLanterns, setShowOtherLanterns] = useState(false);
+  const [displayWishes, setDisplayWishes] = useState([]);
   const { wishes, totalCount } = useSelector((state) => state.wishes);
   const dispatch = useDispatch();
 
@@ -49,6 +50,21 @@ const LanternDisplay = ({ newWish, onBack }) => {
         const data = snapshot.val();
         const wishesArray = Object.values(data).reverse();
         dispatch(setWishes(wishesArray));
+        
+        // Update display wishes gradually
+        setDisplayWishes(prevDisplay => {
+          const newWishes = wishesArray.filter(wish => 
+            !prevDisplay.some(existing => existing.id === wish.id)
+          );
+          
+          if (newWishes.length > 0) {
+            const updated = [...newWishes, ...prevDisplay];
+            // Keep only 50 wishes, remove oldest gradually
+            return updated.slice(0, 50);
+          }
+          
+          return prevDisplay;
+        });
       }
     });
 
@@ -67,38 +83,40 @@ const LanternDisplay = ({ newWish, onBack }) => {
   }, [dispatch]);
 
   useEffect(() => {
-    if (wishes.length > 0 && lanternPositions.length === 0) {
-      const positions = [];
-      const minDistance = 10; // Minimum distance between lanterns (percentage)
+    if (displayWishes.length > 0) {
+      const newPositions = { ...lanternPositions };
+      const minDistance = 10;
       
-      for (let i = 0; i < wishes.length; i++) {
-        let attempts = 0;
-        let position;
-        
-        do {
-          position = {
-            x: Math.random() * 85 + 5, // 5-90% to avoid edges
-            y: Math.random() * 60 + 20, // 25-90% to avoid header area
-            size: Math.random() * 45 + 55, // 35-60px
-            rotation: Math.random() * 20 - 10,
-            colorIndex: Math.floor(Math.random() * colorPalettes.length)
-          };
-          attempts++;
-        } while (
-          attempts < 50 && 
-          positions.some(existing => {
-            const dx = position.x - existing.x;
-            const dy = position.y - existing.y;
-            return Math.sqrt(dx * dx + dy * dy) < minDistance;
-          })
-        );
-        
-        positions.push(position);
-      }
+      displayWishes.forEach(wish => {
+        if (!newPositions[wish.id]) {
+          let attempts = 0;
+          let position;
+          
+          do {
+            position = {
+              x: Math.random() * 85 + 5,
+              y: Math.random() * 60 + 20,
+              size: Math.random() * 45 + 55,
+              rotation: Math.random() * 20 - 10,
+              colorIndex: Math.floor(Math.random() * colorPalettes.length)
+            };
+            attempts++;
+          } while (
+            attempts < 50 && 
+            Object.values(newPositions).some(existing => {
+              const dx = position.x - existing.x;
+              const dy = position.y - existing.y;
+              return Math.sqrt(dx * dx + dy * dy) < minDistance;
+            })
+          );
+          
+          newPositions[wish.id] = position;
+        }
+      });
       
-      setLanternPositions(positions);
+      setLanternPositions(newPositions);
     }
-  }, [wishes, lanternPositions.length]);
+  }, [displayWishes]);
 
   return (
     <div className="min-h-screen bg-black overflow-hidden relative">
@@ -256,15 +274,17 @@ const LanternDisplay = ({ newWish, onBack }) => {
       )}
 
       {/* Other Lanterns (appear after delay) */}
-      {showOtherLanterns && wishes.map((wish, index) => {
-        const position = lanternPositions[index];
+      {showOtherLanterns && displayWishes.filter(wish => 
+        !newWish || wish.id !== newWish.id
+      ).map((wish) => {
+        const position = lanternPositions[wish.id];
         if (!position) return null;
 
         const colors = colorPalettes[position.colorIndex];
 
         return (
           <motion.div
-            key={wish.id || index}
+            key={wish.id}
             className="absolute cursor-pointer"
             style={{
               left: `${position.x}%`,
@@ -274,7 +294,7 @@ const LanternDisplay = ({ newWish, onBack }) => {
             animate={{ y: 0, opacity: 1, scale: 1 }}
             transition={{
               duration: 11,
-              delay: 1 + (index * 0.3), // Start after 1 second + staggered delay
+              delay: 1 + (Object.keys(lanternPositions).indexOf(wish.id) * 0.3),
               ease: "easeOut"
             }}
             whileHover={{ scale: 1.2 }}
